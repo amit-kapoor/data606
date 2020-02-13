@@ -1,0 +1,412 @@
+---
+title: "Chapter 4 - Distributions of Random Variables"
+author: "Amit Kapoor"
+date: "9/22/2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    extra_dependencies:
+    - geometry
+    - multicol
+    - multirow
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Area under the curve, Part I**. (4.1, p. 142) What percent of a standard normal distribution $N(\mu=0, \sigma=1)$ is found in each region? Be sure to draw a graph.
+
+(a) $Z < -1.35$
+(b) $Z > 1.48$
+(c) $-0.4 < Z < 1.5$
+(d) $|Z| > 2$
+
+
+**(a) $Z < -1.35$**
+
+```{r calc-x-a, echo=FALSE}
+# use the DATA606::normalPlot function
+mu <- 0
+sigma <- 1
+z <- -1.35
+x <- z*sigma + mu
+x
+```
+
+**Since we have Z < -1.35, we can find propbability P(x < -1.35) as**
+
+```{r pnorm-a, eval=TRUE}
+pnorm(x, mean = mu, sd = sigma)
+```
+
+```{r normalplot-a, eval=TRUE}
+library(DATA606)
+normalPlot(mean = mu, sd = sigma, bounds = c(-Inf, x), tails = FALSE)
+```
+
+**8.85% percent of a standard normal distribution found.**
+
+
+**(b) $Z > 1.48$**
+
+
+```{r calc-x-b, echo=FALSE}
+# use the DATA606::normalPlot function
+mu <- 0
+sigma <- 1
+z <- 1.48
+x <- z*sigma + mu
+x
+```
+
+**Since we have Z < 1.48, we can find propbability P(x > 1.48) as**
+
+```{r pnorm-b, eval=TRUE}
+1 - pnorm(x, mean = mu, sd = sigma)
+```
+
+
+```{r normalplot-b, eval=TRUE}
+normalPlot(mean = mu, sd = sigma, bounds = c(x, Inf), tails = FALSE)
+```
+
+**6.94% percent of a standard normal distribution found.**
+
+--------------------------------------------------------------------------------
+
+
+**(c) $-0.4 < Z < 1.5$**
+
+```{r calc-x1-x2-c, echo=FALSE}
+z1 <- -0.4
+z2 <- 1.5
+x1 <- z1*sigma + mu
+x2 <- z2*sigma + mu
+```
+
+**Since we have -0.4 < Z < 1.5, we can find propbability P(-0.4 < x < 1.5) as**
+
+```{r pnorm-x1-x2, eval=TRUE}
+p1 <- pnorm(x1, mean = mu, sd = sigma)
+p2 <- pnorm(x2, mean = mu, sd = sigma)
+p2 - p1
+```
+
+```{r normalplot-c, eval=TRUE}
+normalPlot(mean = mu, sd = sigma, bounds = c(x1, x2), tails = FALSE)
+```
+
+**58.86% percent of a standard normal distribution found.**
+
+**(d) $|Z| > 2$**
+
+```{r calc-d, echo=FALSE}
+
+# since its an absolute value, we will define z1 and z2 as follows
+z1 <- -2
+z2 <- 2
+x1 <- z1*sigma + mu
+x2 <- z2*sigma + mu
+```
+
+
+**Since we have |Z| > 2, we can find propbability P(x < -2 or x > 2) as**
+
+
+```{r pnorm-d, eval=TRUE}
+p1 <- pnorm(x1, mean = mu, sd = sigma)
+p2 <- 1 - pnorm(x2, mean = mu, sd = sigma)
+p1 + p2
+```
+
+
+```{r normalplot-d, eval=TRUE}
+normalPlot(mean = mu, sd = sigma, bounds = c(x1, x2), tails = TRUE)
+```
+
+
+**4.56% percent of a standard normal distribution found.**
+
+
+\clearpage
+
+**Triathlon times, Part I** (4.4, p. 142) In triathlons, it is common for racers to be placed into age and gender groups. Friends Leo and Mary both completed the Hermosa Beach Triathlon, where Leo competed in the *Men, Ages 30 - 34* group while Mary competed in the *Women, Ages 25 - 29* group. Leo completed the race in 1:22:28 (4948 seconds), while Mary completed the race in 1:31:53 (5513 seconds). Obviously Leo finished faster, but they are curious about how they did within their respective groups. Can you help them? Here is some information on the performance of their groups:
+
+* The finishing times of the \textit{Men, Ages 30 - 34} group has a mean of 4313 seconds with a standard deviation of 583 seconds.
+* The finishing times of the \textit{Women, Ages 25 - 29} group has a mean of 5261 seconds with a standard deviation of 807 seconds.
+* The distributions of finishing times for both groups are approximately Normal.
+
+Remember: a better performance corresponds to a faster finish.
+
+(a) Write down the short-hand for these two normal distributions.
+
+**Men, Ages 30 - 34: $N(\mu=4313, \sigma=583)$**
+
+**Women, Ages 25 - 29: $N(\mu=5261, \sigma=807)$**
+
+(b) What are the Z-scores for Leo's and Mary's finishing times? What do these Z-scores tell you?
+
+```{r leo-z-score, eval=TRUE}
+mean_m <- 4313
+sd_m <- 583
+leo_x <- 4948
+leo_z <- (leo_x - mean_m) / sd_m
+leo_z
+```
+
+```{r mary-z-score, eval=TRUE}
+mean_w <- 5261
+sd_w <- 807
+mary_x <- 5513
+mary_z <- (mary_x - mean_w) / sd_w
+mary_z
+```
+
+**The Z-score of an observation is the number of standard deviations it falls above or below the mean**
+**Leo's z-score suggests his time was 1.09 standard deviations above the mean.**
+**Mary's z-score suggests her time was 0.31 standard deviations above the mean.**
+
+(c) Did Leo or Mary rank better in their respective groups? Explain your reasoning.
+
+**Given the two z-scores, Mary is closer to her group mean. So Mary ranks better in her group.**
+
+(d) What percent of the triathletes did Leo finish faster than in his group?
+
+```{r pnorm-m, eval=TRUE}
+pnorm(leo_x, mean = mean_m, sd = sd_m)
+```
+
+**Leo finished faster than 86.20% triathletes in his group.**
+
+(e) What percent of the triathletes did Mary finish faster than in her group?
+
+```{r pnorm-w, eval=TRUE}
+pnorm(mary_x, mean = mean_w, sd = sd_w)
+```
+
+**Mary finished faster than 62.26% triathletes in her group.**
+
+(f) If the distributions of finishing times are not nearly normal, would your answers to parts (b) - (e) change? Explain your reasoning.
+
+**If the distributions of finishing times are not nearly normal, z-scores will still be the same but answers to questions (d) and (e) would be different.**
+
+
+
+--------------------------------------------------------------------------------
+
+\clearpage
+
+**Heights of female college students** Below are heights of 25 female college students.
+
+\[ \stackrel{1}{54}, \stackrel{2}{55}, \stackrel{3}{56}, \stackrel{4}{56}, 
+\stackrel{5}{57}, \stackrel{6}{58}, \stackrel{7}{58}, \stackrel{8}{59}, 
+\stackrel{9}{60}, \stackrel{10}{60}, \stackrel{11}{60}, \stackrel{12}{61}, 
+\stackrel{13}{61}, \stackrel{14}{62}, \stackrel{15}{62}, \stackrel{16}{63}, 
+\stackrel{17}{63}, \stackrel{18}{63}, \stackrel{19}{64}, \stackrel{20}{65}, 
+\stackrel{21}{65}, \stackrel{22}{67}, \stackrel{23}{67}, \stackrel{24}{69}, 
+\stackrel{25}{73} \]
+
+(a) The mean height is 61.52 inches with a standard deviation of 4.58 inches. Use this information to determine if the heights approximately follow the 68-95-99.7% Rule.
+
+```{r fhgt-summary, eval=TRUE}
+fhgt <- c(54, 55, 56, 56, 57, 58, 58, 59, 60, 60, 60, 61, 61, 62, 62, 63, 63, 63, 64, 65, 65, 67, 67, 69, 73)
+summary(fhgt)
+```
+
+
+```{r np-one-standarddev-from-the-mean}
+mean_fhgt <- 61.52
+sd_fhgt <- 4.58
+normalPlot(mean = 61.52, sd = 4.58, bounds = c((mean_fhgt-sd_fhgt), (mean_fhgt+sd_fhgt)), tails = FALSE)
+```
+
+
+
+
+
+```{r np-two-standarddev-from-the-mean}
+normalPlot(mean = 61.52, sd = 4.58, bounds = c((mean_fhgt-2*sd_fhgt), (mean_fhgt+2*sd_fhgt)), tails = FALSE)
+```
+
+
+
+
+```{r np-three-standarddev-from-the-mean}
+normalPlot(mean = 61.52, sd = 4.58, bounds = c((mean_fhgt-3*sd_fhgt), (mean_fhgt+3*sd_fhgt)), tails = FALSE)
+```
+
+
+**Seeing all 3 above plots for 1, 2 and 3 standard deviations from mean, it appears heights approximately follow the 68-95-99.7% Rule**
+
+
+
+(b) Do these data appear to follow a normal distribution? Explain your reasoning using the graphs provided below.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hold", out.width="50%", fig.height=3}
+library(openintro)
+heights <- c(54, 55, 56, 56, 57, 58, 58, 59, 60, 60, 60, 61, 
+            61, 62, 62, 63, 63, 63, 64, 65, 65, 67, 67, 69, 73)
+par(mar=c(3.7,2.2,1,1), las=1, mgp=c(2.5,0.7,0), mfrow = c(1,1), cex.lab = 1.5, cex.axis = 1.5)
+histPlot(heights, col = COL[1], xlab = "Heights", ylab = "", probability = TRUE, axes = FALSE, ylim = c(0,0.085))
+axis(1)
+x <- heights
+xfit <- seq(min(x)-5, max(x)+5, length = 400)
+yfit <- dnorm(xfit, mean = mean(x), sd = sd(x))
+lines(xfit, yfit, col = COL[4], lwd = 2)
+par(mar=c(3.7,3.7,1,1), las=1, mgp=c(2.5,0.7,0), mfrow = c(1,1), cex.lab = 1.5, cex.axis = 1.5)
+qqnorm(heights, col = COL[1], pch = 19, main = "", axes = FALSE)
+axis(1)
+axis(2)
+qqline(heights, col = COL[1])
+```
+
+```{r qqnormsim-fhgt, eval=TRUE}
+# Use the DATA606::qqnormsim function
+qqnormsim(fhgt)
+```
+
+
+
+```{r hist-fhgt, eval=TRUE}
+hist(fhgt)
+```
+
+
+**Yes Height does follow normal distribution. QQ plots shows most of the points follow line with few outliers.**
+
+
+--------------------------------------------------------------------------------
+
+\clearpage
+
+**Defective rate.** (4.14, p. 148) A machine that produces a special type of transistor (a component of computers) has a 2% defective rate. The production is considered a random process where each transistor is independent of the others.
+
+(a) What is the probability that the 10th transistor produced is the first with a defect?
+
+```{r prob-tenth-defect, eval=TRUE}
+prob_10 <- 0.98*0.98*0.98*0.98*0.98*0.98*0.98*0.98*0.98*0.02
+prob_10
+```
+
+
+(b) What is the probability that the machine produces no defective transistors in a batch of 100?
+
+```{r prob-hundred-no-defect, eval=TRUE}
+prob_100 <- 0.98 ^ 100
+prob_100
+```
+
+(c) On average, how many transistors would you expect to be produced before the first with a defect? What is the standard deviation?
+
+**MEAN**
+
+```{r mean-2, eval=TRUE}
+mean_2 <- 1/.02
+mean_2
+```
+
+**On average, 50 transistors would be expected to be produced before the first with a defect**
+
+**STANDARD DEVIATION**
+
+```{r sd-2, eval=TRUE}
+sd_2 <- sqrt((1-.02)/(0.02)^2)
+sd_2
+```
+
+
+(d) Another machine that also produces transistors has a 5% defective rate where each transistor
+is produced independent of the others. On average how many transistors would you expect to be produced with this machine before the first with a defect? What is the standard deviation?
+
+**MEAN**
+
+```{r mean-5, eval=TRUE}
+mean_5 <- 1/.05
+mean_5
+```
+
+**On average, 20 transistors would be expected to be produced before the first with a defect**
+
+**STANDARD DEVIATION**
+
+```{r sd-5, eval=TRUE}
+sd_5 <- sqrt((1-.05)/(0.05)^2)
+sd_5
+```
+
+(e) Based on your answers to parts (c) and (d), how does increasing the probability of an event affect the mean and standard deviation of the wait time until success?
+
+
+**Based on answers of (c) and (d), increasing the probability of an event decreases the mean and standard deviation.**
+
+
+--------------------------------------------------------------------------------
+
+\clearpage
+
+**Male children.** While it is often assumed that the probabilities of having a boy or a girl are the same, the actual probability of having a boy is slightly higher at 0.51. Suppose a couple plans to have 3 kids.
+
+(a) Use the binomial model to calculate the probability that two of them will be boys.
+
+```{r prob-2-boys, eval=TRUE}
+# Using binomial distribution to calculate the probability of observing exactly k successes in n independent trials
+
+n <- 3
+k <- 2
+p_boy <- 0.51
+p_2_boys <- choose(n, k) * p_boy ^ k * (1 - p_boy) ^ (n-k)
+p_2_boys
+```
+
+**Probability that two of them will be boys is 38.23%.**
+
+(b) Write out all possible orderings of 3 children, 2 of whom are boys. Use these scenarios to calculate the same probability from part (a) but using the addition rule for disjoint outcomes. Confirm that your answers from parts (a) and (b) match.
+
+```{r prob-add-rule, eval=TRUE}
+(p_boy*p_boy*(1-p_boy)) + (p_boy*(1-p_boy)*p_boy) + ((1-p_boy)*p_boy*p_boy)
+```
+
+**Thus probabilities calculated in (a) and (b) match.**
+
+(c) If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, briefly describe why the approach from part (b) would be more tedious than the approach from part (a).
+
+
+```{r choose, eval=TRUE}
+choose(8, 3)
+```
+
+**If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, part (b) approach will be more tedious since there will 56 different combinations to deal with.**
+
+
+
+--------------------------------------------------------------------------------
+
+\clearpage
+
+**Serving in volleyball.** (4.30, p. 162) A not-so-skilled volleyball player has a 15% chance of making the serve, which involves hitting the ball so it passes over the net on a trajectory such that it will land in the opposing team’s court. Suppose that her serves are independent of each other.
+
+(a) What is the probability that on the 10th try she will make her 3rd successful serve?
+
+```{r prob-3-10, eval=TRUE}
+# negative binomial distribution
+n <- 10
+k <- 3
+p_serve <- 0.15
+p_3_10 <- choose(n-1, k-1) * p_serve ^ k * (1 - p_serve) ^ (n - k)
+p_3_10
+```
+
+**The probability that on the 10th try she will make her 3rd successful serve, is 3.9%.**
+
+(b) Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?
+
+**The probability that her 10th serve will be successful is 15% given independant serves.**
+
+(c) Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be different. Can you explain the reason for this discrepancy?
+
+**Though it appears both (a) and (b) talk about probabilities of having success in 10th try but they both are different. In (a),  it has been asked for 3rd success in 10th try which points to negative binomial distribution but in (b), its just for 10th serve to be success which is like any other try.**
+
+
+
